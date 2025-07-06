@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>희망의 명언 - 당신을 위한 따뜻한 메시지</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="site-title">💫 희망의 명언 💫</h1>
+            <p class="site-subtitle">당신을 위한 따뜻한 메시지</p>
+        </header>
+
+        <main>
+            <!-- 모드 선택 버튼 -->
+            <div class="mode-selector">
+                <button class="mode-btn active" id="quoteMode">
+                    💫 명언 보기
+                </button>
+                <button class="mode-btn" id="quizMode">
+                    🧠 퀴즈 게임
+                </button>
+            </div>
+
+            <!-- 명언 보기 모드 -->
+            <div class="quote-section" id="quoteSection">
+                <div class="quote-container">
+                    <div class="quote-wrapper">
+                        <div class="quote-text" id="quoteText">
+                            로딩 중...
+                        </div>
+                        <div class="quote-author" id="quoteAuthor">
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <button class="new-quote-btn" id="newQuoteBtn">
+                        ✨ 새로운 희망 찾기 ✨
+                    </button>
+                </div>
+            </div>
+
+            <!-- 퀴즈 게임 모드 -->
+            <div class="quiz-section" id="quizSection" style="display: none;">
+                <div class="quiz-header">
+                    <div class="quiz-stats">
+                        <span class="score">점수: <span id="scoreDisplay">0</span></span>
+                        <span class="streak">연속: <span id="streakDisplay">0</span></span>
+                    </div>
+                    <div class="quiz-progress">
+                        <span>문제 <span id="currentQuestion">1</span> / <span id="totalQuestions">10</span></span>
+                    </div>
+                </div>
+
+                <div class="quiz-container">
+                    <div class="quiz-question">
+                        <div class="quiz-quote" id="quizQuote">
+                            누가 이 명언을 말했을까요?
+                        </div>
+                    </div>
+
+                    <div class="quiz-options" id="quizOptions">
+                        <!-- 선택지들이 동적으로 추가됩니다 -->
+                    </div>
+
+                    <div class="quiz-result" id="quizResult" style="display: none;">
+                        <div class="result-message" id="resultMessage"></div>
+                        <div class="correct-answer" id="correctAnswer"></div>
+                    </div>
+                </div>
+
+                <div class="quiz-controls">
+                    <button class="quiz-btn" id="nextQuizBtn" style="display: none;">
+                        다음 문제 ➡️
+                    </button>
+                    <button class="quiz-btn restart-btn" id="restartQuizBtn">
+                        🔄 다시 시작
+                    </button>
+                </div>
+
+                <div class="quiz-final" id="quizFinal" style="display: none;">
+                    <div class="final-score">
+                        <h3>🎉 퀴즈 완료! 🎉</h3>
+                        <p>최종 점수: <span id="finalScore">0</span>점</p>
+                        <p>정답률: <span id="accuracy">0</span>%</p>
+                        <div class="final-message" id="finalMessage"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p class="encouragement">당신의 꿈을 향한 여정을 응원합니다 🌟</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
