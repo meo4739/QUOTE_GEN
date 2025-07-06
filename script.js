@@ -126,9 +126,15 @@ const finalScoreElement = document.getElementById('finalScore');
 const accuracyElement = document.getElementById('accuracy');
 const finalMessageElement = document.getElementById('finalMessage');
 
-// 다크모드 관련 변수
+// 다크모드 관련 DOM 요소
 const darkModeToggle = document.getElementById('darkModeToggle');
 const toggleIcon = document.querySelector('.toggle-icon');
+
+// 후원 버튼 관련 요소들
+const floatingSupport = document.getElementById('floatingSupport');
+const coffeeBtn = document.getElementById('coffeeBtn');
+
+// ========== 다크모드 기능 ==========
 
 // 다크모드 초기화
 function initializeDarkMode() {
@@ -143,14 +149,18 @@ function initializeDarkMode() {
 // 다크모드 활성화
 function enableDarkMode() {
     document.documentElement.setAttribute('data-theme', 'dark');
-    toggleIcon.textContent = '☀️';
+    if (toggleIcon) {
+        toggleIcon.textContent = '☀️';
+    }
     localStorage.setItem('theme', 'dark');
 }
 
 // 라이트모드 활성화
 function enableLightMode() {
     document.documentElement.setAttribute('data-theme', 'light');
-    toggleIcon.textContent = '🌙';
+    if (toggleIcon) {
+        toggleIcon.textContent = '🌙';
+    }
     localStorage.setItem('theme', 'light');
 }
 
@@ -167,12 +177,26 @@ function toggleDarkMode() {
     }
 }
 
-// 다크모드 토글 이벤트 리스너 추가
-darkModeToggle.addEventListener('click', toggleDarkMode);
+// 시스템 다크모드 변경 감지
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+    if (!localStorage.getItem('theme')) {
+        if (e.matches) {
+            enableDarkMode();
+        } else {
+            enableLightMode();
+        }
+    }
+});
 
-// 페이지 로드 시 다크모드 초기화
+// 페이지 로드 시 실행
 document.addEventListener('DOMContentLoaded', function() {
+    // 다크모드 초기화
     initializeDarkMode();
+    
+    // 다크모드 토글 이벤트 리스너 추가
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', toggleDarkMode);
+    }
     
     // 명언 데이터를 직접 사용하므로 첫 번째 명언 바로 표시
     displayRandomQuote();
@@ -209,6 +233,9 @@ document.addEventListener('DOMContentLoaded', function() {
             showNewQuote();
         }
     });
+    
+    // 후원 버튼 초기화
+    initSupportButtons();
 });
 
 // 랜덤 명언 표시
@@ -651,13 +678,85 @@ function updateQuizDisplay() {
     totalQuestionsDisplay.textContent = quizData.totalQuestions;
 }
 
-// 시스템 다크모드 변경 감지
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-    if (!localStorage.getItem('theme')) {
-        if (e.matches) {
-            enableDarkMode();
+// 후원 버튼 관련 함수들
+function initSupportButtons() {
+    // 스크롤 이벤트로 플로팅 버튼 표시/숨김
+    let lastScrollY = window.scrollY;
+    
+    function handleScroll() {
+        const currentScrollY = window.scrollY;
+        const isScrollingDown = currentScrollY > lastScrollY;
+        const scrollThreshold = 100; // 100px 이상 스크롤했을 때
+        
+        if (currentScrollY > scrollThreshold) {
+            floatingSupport.style.opacity = '1';
+            floatingSupport.style.visibility = 'visible';
+            floatingSupport.style.transform = `translateY(${isScrollingDown ? '0' : '-10px'})`;
         } else {
-            enableLightMode();
+            floatingSupport.style.opacity = '0';
+            floatingSupport.style.visibility = 'hidden';
+            floatingSupport.style.transform = 'translateY(10px)';
         }
+        
+        lastScrollY = currentScrollY;
     }
-}); 
+    
+    // 디바운스된 스크롤 핸들러
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
+        }
+        scrollTimeout = setTimeout(handleScroll, 10);
+    });
+    
+    // 초기 상태 설정
+    floatingSupport.style.opacity = '0';
+    floatingSupport.style.visibility = 'hidden';
+    floatingSupport.style.transition = 'all 0.3s ease';
+    
+    // 후원 버튼 클릭 이벤트
+    function handleSupportClick(event) {
+        const button = event.currentTarget;
+        
+        // 클릭 애니메이션
+        button.style.transform = 'scale(0.95)';
+        
+        // 감사 메시지 (선택적)
+        const originalText = button.querySelector('.coffee-text')?.textContent;
+        if (originalText) {
+            button.querySelector('.coffee-text').textContent = '감사합니다! 💝';
+            setTimeout(() => {
+                button.querySelector('.coffee-text').textContent = originalText;
+            }, 2000);
+        }
+        
+        setTimeout(() => {
+            button.style.transform = '';
+        }, 150);
+        
+        // 애널리틱스나 추적을 위한 이벤트 (선택적)
+        console.log('후원 버튼 클릭됨');
+    }
+    
+    // 메인 후원 버튼과 플로팅 버튼에 이벤트 리스너 추가
+    if (coffeeBtn) {
+        coffeeBtn.addEventListener('click', handleSupportClick);
+    }
+    
+    const floatingCoffeeBtn = document.querySelector('.floating-coffee-btn');
+    if (floatingCoffeeBtn) {
+        floatingCoffeeBtn.addEventListener('click', handleSupportClick);
+    }
+    
+    // 호버 효과 개선
+    [coffeeBtn, floatingCoffeeBtn].forEach(btn => {
+        if (btn) {
+            btn.addEventListener('mouseenter', () => {
+                btn.style.animation = 'none';
+                void btn.offsetHeight; // 리플로우 강제
+                btn.style.animation = null;
+            });
+        }
+    });
+} 
