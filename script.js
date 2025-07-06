@@ -126,8 +126,54 @@ const finalScoreElement = document.getElementById('finalScore');
 const accuracyElement = document.getElementById('accuracy');
 const finalMessageElement = document.getElementById('finalMessage');
 
-// 페이지 로드 시 실행
+// 다크모드 관련 변수
+const darkModeToggle = document.getElementById('darkModeToggle');
+const toggleIcon = document.querySelector('.toggle-icon');
+
+// 다크모드 초기화
+function initializeDarkMode() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        enableDarkMode();
+    }
+}
+
+// 다크모드 활성화
+function enableDarkMode() {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    toggleIcon.textContent = '☀️';
+    localStorage.setItem('theme', 'dark');
+}
+
+// 라이트모드 활성화
+function enableLightMode() {
+    document.documentElement.setAttribute('data-theme', 'light');
+    toggleIcon.textContent = '🌙';
+    localStorage.setItem('theme', 'light');
+}
+
+// 다크모드 토글
+function toggleDarkMode() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    
+    if (currentTheme === 'dark') {
+        enableLightMode();
+        showNotification('🌞 라이트 모드로 전환되었습니다!');
+    } else {
+        enableDarkMode();
+        showNotification('🌙 다크 모드로 전환되었습니다!');
+    }
+}
+
+// 다크모드 토글 이벤트 리스너 추가
+darkModeToggle.addEventListener('click', toggleDarkMode);
+
+// 페이지 로드 시 다크모드 초기화
 document.addEventListener('DOMContentLoaded', function() {
+    initializeDarkMode();
+    
     // 명언 데이터를 직접 사용하므로 첫 번째 명언 바로 표시
     displayRandomQuote();
     
@@ -603,4 +649,15 @@ function updateQuizDisplay() {
     streakDisplay.textContent = quizData.streak;
     currentQuestionDisplay.textContent = quizData.currentQuestion + 1;
     totalQuestionsDisplay.textContent = quizData.totalQuestions;
-} 
+}
+
+// 시스템 다크모드 변경 감지
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+    if (!localStorage.getItem('theme')) {
+        if (e.matches) {
+            enableDarkMode();
+        } else {
+            enableLightMode();
+        }
+    }
+}); 
